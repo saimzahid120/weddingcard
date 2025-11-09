@@ -43,43 +43,42 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 90vw;
+      width: 92vw;
       max-width: 490px;
       aspect-ratio: 3/4;
       display: flex; align-items: center; justify-content: center;
       opacity: 0;
       transition: opacity 1.1s cubic-bezier(.71,-0.14,.45,1.3);
-      box-sizing: border-box;
       z-index: 8;
+      box-sizing: border-box;
     }
     .card-container.visible {
       opacity: 1;
-      animation: pop-bounce 0.48s 1 cubic-bezier(.53,1.62,0.63,0.89);
+      animation: pop-bounce 0.44s 1 cubic-bezier(.53,1.62,0.63,0.89);
     }
     .card {
       width: 100%; height: 100%;
-      border-radius: 20px;
+      border-radius: 16px;
       background: #fff;
-      box-shadow: 0 12px 34px #d4b35233, 0 8px 38px #cbb35219;
-      padding: 12px;
-      border: 3px solid #e3cf83;
-      display: flex; align-items:center; justify-content:center;
+      box-shadow: 0 8px 22px #d4b35222, 0 6px 24px #cbb35219;
+      padding: 0px; 
+      border: 1.5px solid #e3cf83;
+      display: flex; align-items: center; justify-content: center;
       box-sizing: border-box;
       overflow: hidden;
     }
     .card img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius:16px;
-      box-shadow:0 0px 18px #fbeecd33;
-      width: 100%; height: 100%; object-fit: cover;
+      width: 100%; height: 100%; object-fit: contain;
+      border-radius:14px;
+      box-shadow:0 0px 8px #fbeecd33;
+      margin:0;
     }
     @media (max-width: 600px){
       .card-container {width:98vw; max-width:370px;}
     }
     @keyframes pop-bounce {
-      0%   {transform:translate(-50%, -70%) scale(0.9);}
-      70%  {transform:translate(-50%, -50%) scale(1.1);}
+      0%   {transform:translate(-50%, -70%) scale(0.92);}
+      70%  {transform:translate(-50%, -50%) scale(1.08);}
       100% {transform:translate(-50%, -50%) scale(1);}
     }
   </style>
@@ -135,5 +134,3 @@
   </script>
 </body>
 </html>
-
-
