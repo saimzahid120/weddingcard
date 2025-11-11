@@ -1,130 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Elegant Card Reveal</title>
-  <style>
-    body, html {
-      margin:0; padding:0; min-height:100vh; width:100vw;
-      background: radial-gradient(at 65% 10%, #f3e9db 0%, #faeee0 80%);
-      font-family:'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      overflow:hidden;
-      box-sizing: border-box;
-    }
-    #scene {
-      position:relative; width:100vw; height:100vh; min-height:500px;
-    }
-    .instructions {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%,-50%);
-      background: rgba(255,255,255,0.97);
-      padding: 2vw 5vw;
-      border-radius: 12px;
-      font-size: clamp(1rem,2.5vw,1.3rem);
-      color: #624711;
-      font-weight: bold;
-      letter-spacing: 1px;
-      box-shadow: 0 2px 16px rgba(158,121,26,0.17);
-      z-index: 3;
-      border: 2px solid #d5b16b;
-      filter: drop-shadow(0 1px 1px #eed69c77);
-      transition: opacity 0.6s;
-    }
-    .instructions.hide {
-      opacity:0; pointer-events:none; transition:opacity 0.6s;
-    }
-    .confetti {
-      position:fixed; inset:0; pointer-events:none; z-index:20;
-    }
-    .card {
-      position:absolute; left:50%; top:56%; transform:translate(-50%,0) scale(0.70) rotate(-1deg);
-      width:auto; height:auto; max-width:85vw; max-height:62vh; opacity:0;
-      border-radius:16px; box-shadow:0 11px 24px #d4b35222,0 6px 26px #d4b35244;
-      background:#fff;
-      padding:5px;
-      border:2px solid #dabb6199;
-      display:flex; align-items:center; justify-content:center;
-      transition:
-        opacity 1.2s cubic-bezier(.71,-0.14,.45,1.3),transform 1.18s cubic-bezier(.23,1.2,.38,.99),top 1.1s cubic-bezier(.23,1.2,.38,.99);
-      z-index:8;
-      box-sizing: border-box;
-    }
-    .card.visible {
-      opacity:1;
-      top:50%;
-      transform:translate(-50%,-50%) scale(1) rotate(0.3deg);
-      animation: pop-bounce 0.45s 1 cubic-bezier(.53,1.62,0.63,0.89);
-    }
-    .card img {
-      display:block;
-      max-width:80vw;
-      max-height:57vh;
-      width:auto;
-      height:auto;
-      border-radius:14px;
-      box-shadow:0 0px 18px #fbeecd33;
-      margin:auto;
-    }
-    @media(max-width:800px){
-      .card{max-width:97vw;}
-      .card img {max-width:94vw;max-height:41vh;}
-    }
-    @keyframes pop-bounce {
-      0%   {transform:translate(-50%, -70%) scale(0.88);}
-      70%  {transform:translate(-50%, -50%) scale(1.08);}
-      100% {transform:translate(-50%, -50%) scale(1);}
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>3-Page Invitation Reveal</title>
+<style>
+  html,body{height:100%}
+  body{
+    margin:0; overflow:hidden; color:#5b4310;
+    font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    background: radial-gradient(at 65% 10%, #f3e9db 0%, #faeee0 78%);
+  }
+  #scene{position:relative; width:100vw; height:100vh; min-height:560px}
+
+  /* Pages */
+  .page{
+    position:absolute; inset:0; display:grid; place-items:center;
+    opacity:0; transform:scale(.985); pointer-events:none;
+    transition:opacity .55s ease, transform .6s cubic-bezier(.23,1.2,.38,.99);
+  }
+  .page.active{opacity:1; transform:scale(1); pointer-events:auto}
+  .hint{position:absolute; bottom:2.2rem; left:0; right:0; text-align:center; font-size:13px; color:#6d551b; opacity:.75}
+
+  /* ===== Save-the-Date card (now truly centered) ===== */
+  .dateBadge{
+    /* size & centering of the BOX itself */
+    inline-size:min(84vw, 520px);
+    aspect-ratio: 16/10;
+    margin: 0 auto;                /* centers horizontally */
+    display:grid;                  /* centers content inside */
+    place-items:center;            /* horizontal & vertical */
+    gap: 10px;
+
+    /* visuals */
+    background:
+      radial-gradient(120% 85% at 50% -10%, #ffffff, #ffffff00 70%),
+      linear-gradient(180deg, #fffdf8, #f7ecd9 70%);
+    border:2px solid #dabb61; border-radius:18px;
+    box-shadow:0 16px 60px rgba(159,121,26,.22), 0 8px 26px rgba(159,121,26,.20);
+    padding: 22px;
+
+    /* remove previous offsets that broke centering */
+    transform:none;
+    animation: badgeIn .6s ease-out both;
+  }
+  @keyframes badgeIn{from{opacity:0; transform:scale(.98)} to{opacity:1; transform:scale(1)}}
+
+  /* content stack inside the box */
+  .stack{ display:grid; place-items:center; gap: 8px; text-align:center }
+  .saveTitle{ margin:0; font-weight:800; letter-spacing:.3px; color:#4c3a0f; font-size:clamp(20px,5.8vw,36px) }
+  .weekday{ font-weight:700; color:#7a5c16; opacity:.95 }
+  .num{ font-size:clamp(56px,12vw,82px); font-weight:900; color:#2d2d2d; text-shadow:0 3px 0 #f0d999 }
+  .month{ display:block; letter-spacing:5px; font-weight:800 }
+  .year{ font-weight:800; color:#6b5318 }
+  .bottom{ font-size:14px; opacity:.85; margin-top:4px }
+
+  /* ===== Small “card boxes” for images (same sizing as yours) ===== */
+  .cardbox{
+    position:absolute; left:50%; top:56%;
+    transform:translate(-50%,0) scale(.70) rotate(-1deg);
+    width:auto; height:auto; max-width:85vw; max-height:62vh; opacity:0;
+    padding:5px; background:#fff; border-radius:16px; border:2px solid #dabb6199;
+    box-shadow:0 11px 24px #d4b35222, 0 6px 26px #d4b35244;
+    display:flex; align-items:center; justify-content:center; box-sizing:border-box;
+    transition:opacity 1.1s cubic-bezier(.71,-0.14,.45,1.3),
+               transform 1.1s cubic-bezier(.23,1.2,.38,.99),
+               top 1s cubic-bezier(.23,1.2,.38,.99);
+  }
+  .cardbox.visible{ opacity:1; top:50%; transform:translate(-50%,-50%) scale(1) rotate(.3deg); animation:pop .45s 1 cubic-bezier(.53,1.62,.63,.89) }
+  .cardbox img{ display:block; max-width:80vw; max-height:57vh; width:auto; height:auto; border-radius:14px; box-shadow:0 0 18px #fbeecd33; margin:auto }
+  @media (max-width:800px){ .cardbox{max-width:97vw;} .cardbox img{max-width:94vw; max-height:41vh;} }
+  @keyframes pop{0%{transform:translate(-50%,-70%) scale(.88)}70%{transform:translate(-50%,-50%) scale(1.08)}100%{transform:translate(-50%,-50%) scale(1)}}
+
+  /* Confetti/hearts layer */
+  .confetti{position:fixed; inset:0; pointer-events:none; z-index:22}
+  .heart{position:absolute; font-size:14px; line-height:1; filter:drop-shadow(0 1px 1px rgba(0,0,0,.2));}
+</style>
 </head>
 <body>
-  <div id="scene">
-    <div class="instructions" id="instructions">Tap or click anywhere to reveal the invitation</div>
-    <div class="card" id="card">
-      <img src="33333.jpeg" alt="Invitation Card"/>
-    </div>
+  <div id="scene" aria-label="Tap to continue">
+
+    <!-- PAGE 1: Save the Date -->
+    <section class="page active" data-page="1">
+      <div class="dateBadge">
+        <div class="stack">
+          <h1 class="saveTitle">Save the Date</h1>
+          <div class="weekday">Thursday</div>
+          <div>
+            <div class="num">20</div>
+            <span class="month">N O V</span>
+            <div class="year">2025</div>
+          </div>
+          <div class="bottom">Reception 06:30 pm • Dinner 07:30 pm</div>
+        </div>
+      </div>
+      <div class="hint">Tap to continue • 1/3</div>
+    </section>
+
+    <!-- PAGE 2: First image (cover) -->
+    <section class="page" data-page="2">
+      <div class="cardbox" id="coverBox">
+        <img src="333.jpeg" alt="Cover"/>
+      </div>
+      <div class="hint">Tap to open the invitation • 2/3</div>
+    </section>
+
+    <!-- PAGE 3: Main card -->
+    <section class="page" data-page="3">
+      <div class="cardbox" id="mainBox">
+        <img src="33333.jpeg" alt="Invitation Card"/>
+      </div>
+      <div class="hint">Tap to replay • 3/3</div>
+    </section>
+
+    <!-- Global confetti/hearts layer -->
     <div class="confetti" id="confetti"></div>
   </div>
-  <script>
-    function launchConfetti() {
-      const container = document.getElementById('confetti');
-      const N = 110;
-      for (let i=0; i<N; ++i) {
-        const confetto = document.createElement('div');
-        confetto.style.position = 'absolute';
-        confetto.style.left = (6+88*Math.random())+'vw';
-        confetto.style.top = '-8vh';
-        confetto.style.width = confetto.style.height = (7+6*Math.random())+'px';
-        confetto.style.borderRadius = (Math.random()>0.5?'50%':'3px');
-        confetto.style.background = [
-          '#FFD700', '#F6D366', '#FFB4A2', '#ffc561','#eae2b7','#e9c46a','#be94a7'
-        ][Math.floor(Math.random()*7)];
-        confetto.style.transform = `rotate(${Math.random()*360}deg)`;
-        confetto.style.opacity = '0.83';
-        confetto.style.transition = `all ${1.8+Math.random()}s cubic-bezier(.67,.08,.82,.97)`;
-        container.appendChild(confetto);
-        setTimeout(() => {
-          confetto.style.top = (75+17*Math.random())+'vh';
-          confetto.style.opacity = '0';
-        }, 25);
-        setTimeout(() => container.removeChild(confetto), 2600+Math.random()*500);
-      }
+
+<script>
+  /* Flow control */
+  const pages = [...document.querySelectorAll('.page')];
+  const confettiLayer = document.getElementById('confetti');
+  const coverBox = document.getElementById('coverBox');
+  const mainBox  = document.getElementById('mainBox');
+  let page = 1;
+
+  function show(n){
+    page = n;
+    pages.forEach(p => p.classList.toggle('active', +p.dataset.page === page));
+    if(page===1){ rain(220, 1400); }
+    if(page===2){ requestAnimationFrame(()=>coverBox.classList.add('visible')); rain(240, 1600); }
+    if(page===3){ requestAnimationFrame(()=>mainBox.classList.add('visible'));  rain(260, 1800); }
+  }
+
+  function next(){
+    if(page<3){ show(page+1); }
+    else{
+      coverBox.classList.remove('visible');
+      mainBox.classList.remove('visible');
+      confettiLayer.innerHTML = '';
+      show(1);
     }
-    const card = document.getElementById('card');
-    const instructions = document.getElementById('instructions');
-    let opened = false;
-    document.getElementById('scene').addEventListener('click', function() {
-      if (!opened) {
-        instructions.classList.add('hide');
-        setTimeout(function() {
-          card.classList.add('visible');
-          launchConfetti();
-        }, 420);
-        opened = true;
+  }
+  document.getElementById('scene').addEventListener('click', next);
+  rain(220, 1400); // start with page 1
+
+  /* Confetti + hearts (reduced amount) */
+  function rain(count=220, duration=1500){
+    const colors = ['#FFD700','#F6D366','#FFB4A2','#ffc561','#eae2b7','#e9c46a','#be94a7'];
+    const heartColors = ['#ff6b6b','#ff8787','#ff4d6d'];
+    const start = performance.now();
+    let spawned = 0, perMs = count / duration;
+
+    function loop(now){
+      const elapsed = now - start;
+      if(elapsed > duration) return;
+      const need = Math.floor(elapsed * perMs) - spawned;
+
+      for(let i=0;i<need;i++){
+        spawned++;
+        const isHeart = Math.random() < 0.2;
+
+        if(isHeart){
+          const h = document.createElement('div');
+          h.className = 'heart';
+          h.textContent = '❤';
+          h.style.color = heartColors[(Math.random()*heartColors.length)|0];
+          h.style.left = (Math.random()*100)+'vw';
+          h.style.top = '-6vh';
+          const size = 12 + Math.random()*10;
+          h.style.fontSize = size+'px';
+          const fall = 2 + Math.random()*2.2;
+          const drift = (Math.random()*2-1)*18;
+          h.style.transition = `transform ${fall}s cubic-bezier(.25,.8,.25,1), opacity ${fall}s linear`;
+          h.style.opacity = '0.95';
+          confettiLayer.appendChild(h);
+          requestAnimationFrame(()=>{
+            h.style.transform = `translate(${drift}vw, 94vh) rotate(${(Math.random()*30-15)}deg)`;
+            h.style.opacity = '0';
+          });
+          setTimeout(()=> h.remove(), fall*1000 + 200);
+        } else {
+          const d = document.createElement('div');
+          d.style.position='absolute';
+          d.style.left=(Math.random()*100)+'vw';
+          d.style.top='-8vh';
+          const s = (6 + Math.random()*7);
+          d.style.width=d.style.height=s+'px';
+          d.style.borderRadius=(Math.random()>.5?'50%':'3px');
+          d.style.background=colors[(Math.random()*colors.length)|0];
+          d.style.transform=`rotate(${Math.random()*360}deg)`;
+          d.style.opacity='0.86';
+          const fall = 2 + Math.random()*2.2;
+          const drift = (Math.random()*2-1)*20;
+          d.style.transition = `transform ${fall}s cubic-bezier(.25,.8,.25,1), opacity ${fall}s linear`;
+          confettiLayer.appendChild(d);
+          requestAnimationFrame(()=>{
+            d.style.transform = `translate(${drift}vw, 94vh) rotate(${540+Math.random()*360}deg)`;
+            d.style.opacity = '0';
+          });
+          setTimeout(()=> d.remove(), fall*1000 + 200);
+        }
       }
-    });
-  </script>
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+</script>
 </body>
 </html>
